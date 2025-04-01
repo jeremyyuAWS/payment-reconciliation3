@@ -1,0 +1,34 @@
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+  
+  .print\\:hidden {
+    display: none !important;
+  }
+  
+  .print\\:p-0 {
+    padding: 0 !important;
+  }
+  
+  .print\\:overflow-visible {
+    overflow: visible !important;
+  }
+  
+  .print\\:h-48 {
+    height: 12rem !important;
+  }
+  
+  .print\\:text-xl {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+  
+  /* Remove backgrounds and shadows for better printing */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
