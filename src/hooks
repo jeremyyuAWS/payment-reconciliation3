@@ -1,0 +1,67 @@
+import { useState, useEffect } from 'react';
+import { fetchInvoices, fetchPayments, fetchLedgerEntries } from '../services/api';
+import { reconcilePayments } from '../utils/reconciliationEngine';
+import { invoices as sampleInvoices, payments as samplePayments, ledgerEntries as sampleLedgerEntries } from '../data/sampleData';
+
+export const useReconciliationData = () => {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Attempt to fetch data from the API
+        const [fetchedInvoices, fetchedPayments, fetchedLedgerEntries] = await Promise.all([
+          fetchInvoices(),
+          fetchPayments(),
+          fetchLedgerEntries()
+        ]);
+        
+        // Use the reconciliation engine to process the fetched data
+        const reconciliationResults = reconcilePayments(
+          fetchedPayments, 
+          fetchedInvoices, 
+          fetchedLedgerEntries, 
+          {
+            // Default reconciliation rules if needed
+            matchByInvoiceNumber: true,
+            matchByAmount: true,
+            fuzzyMatching: false
+          }
+        );
+        
+        setResults(reconciliationResults);
+      } catch (error) {
+        console.error('Error fetching data from API, falling back to sample data:', error);
+        setError(error);
+        
+        // Fallback to sample data if API fails
+        const reconciliationResults = reconcilePayments(
+          samplePayments, 
+          sampleInvoices, 
+          sampleLedgerEntries, 
+          {
+            // Default reconciliation rules
+            matchByInvoiceNumber: true,
+            matchByAmount: true,
+            fuzzyMatching: false
+          }
+        );
+        
+        setResults(reconciliationResults);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { results, loading, error };
+};
+
+export default useReconciliationData;

@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Performance from './pages/Performance';
 import Testing from './pages/Testing';
-import WelcomeModal from './components/WelcomeModal';
+import { WelcomeModal } from './components/GuidedTour';
 import GuidedTour from './components/GuidedTour';
 
 function App() {
